@@ -40,7 +40,7 @@ function ChatPrompt() {
   const [isPromptEmpty, setIsPromptEmpty] = useState(true)
 
   const chatAgents = useStore($chatAgents)
-  const messages = useStore($messages)
+  // const messages = useStore($messages)
 
   const onTextChange = () => {
     const val = promptRef.current.value || ''
@@ -51,13 +51,14 @@ function ChatPrompt() {
     const prompt = promptRef.current.value
     console.log('onSendPrompt', prompt)
 
-    const contextInputs = constructCtxArray(messages)
-
     addMessage({
       role: 'user',
       content: prompt,
       id: Math.random().toString(),
     })
+
+    const messages = $messages.get()
+    const contextInputs = constructCtxArray(messages)
 
     // AI response
     const response = {
@@ -70,26 +71,42 @@ function ChatPrompt() {
     // add AI response to chat messages
     addMessage(response)
 
-    const steps = isEmpty(chatAgents) ? [null] : chatAgents
+    // const stream = await onAgent({ prompt: prompt})
+    //   for await (const part of stream) {
+    //     const token = part.choices[0]?.delta?.content || ''
 
+    //     response.content = response.content + token;
+
+    //     updateMessages([...messages, response])
+
+    //   }
+
+    // -----------------
+    // Sélection d'agents
+
+    const steps = isEmpty(chatAgents) ? [null] : chatAgents
     for (let i = 0, len = steps.length; i < len; i++) {
       const agent = steps[i]
 
+      console.log('agent :', agent)
       let cloned = $messages.get()
 
       // call agent
       const stream = await onAgent({ prompt: prompt, agent, contextInputs })
+
+      //
       for await (const part of stream) {
         const token = part.choices[0]?.delta?.content || ''
 
         const last = cloned.at(-1)
+
         cloned[cloned.length - 1] = {
           ...last,
           content: last.content + token,
         }
 
         updateMessages([...cloned])
-      }
+      } // end generation
 
       const last = cloned.at(-1)
 
@@ -113,6 +130,8 @@ function ChatPrompt() {
 
       updateMessages([...cloned])
     }
+
+    // -------------------
 
     promptRef.current.value = ''
     setIsPromptEmpty(true)
@@ -149,7 +168,8 @@ function ChatPrompt() {
             justify='start'
             align='center'
             width='100%'>
-            {/* TODO Add Agent Select Menu */}
+            <AgentMenu></AgentMenu>
+            <AgentSelect></AgentSelect>
           </Flex>
         </Flex>
         <Flex

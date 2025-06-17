@@ -28,6 +28,7 @@ export const onAgent = async function ({
   agent = {},
   prompt,
   canStream = true,
+  canThink = false,
   contextInputs = [],
 }) {
   const aiClient = await getAIClient()
@@ -49,6 +50,10 @@ export const onAgent = async function ({
 
   if (agent.response_format === 'json') {
     agent.role += '\n Ouput: json \n  ```json ... ```'
+  }
+
+  if (!canThink) {
+    agent.role += '\n no_think'
   }
 
   try {
