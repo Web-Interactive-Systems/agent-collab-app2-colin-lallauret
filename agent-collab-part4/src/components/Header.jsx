@@ -1,4 +1,4 @@
-import { MoonIcon, RocketIcon } from '@radix-ui/react-icons'
+import { MoonIcon, RocketIcon, DrawingPinFilledIcon } from '@radix-ui/react-icons'
 import { Button, Flex } from '@radix-ui/themes'
 import { Link } from 'raviger'
 
@@ -15,6 +15,14 @@ export function Header() {
         <Flex gap='6'>
           <Link href='/'>
             <RocketIcon
+              height='22'
+              width='22'
+            />
+          </Link>
+        </Flex>
+        <Flex gap='6'>
+          <Link href='/agents'>
+            <DrawingPinFilledIcon
               height='22'
               width='22'
             />

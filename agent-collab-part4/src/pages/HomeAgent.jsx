@@ -1,17 +1,15 @@
 import { Resizable } from '@/components/Resizable'
-// import Agent from '@/features/agent/Agent'
-import Eleve from '@/features/agent/Eleve'
+import Agent from '@/features/agent/Agent'
 import Chat from '@/features/chat/Chat'
 import { Flex } from '@radix-ui/themes'
 
-function Home() {
+function HomeAgent() {
   return (
     <Flex
       gap='8'
       width='100%'
       height='100%'>
-      <Eleve />
-      {/* <Agent /> */}
+      <Agent />
 
       <Resizable
         defaultSize={{ width: 550 }}
@@ -37,4 +35,4 @@ function Home() {
   )
 }
 
-export default Home
+export default HomeAgent

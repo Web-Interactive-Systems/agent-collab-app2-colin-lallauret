@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react'
 import LayoutTheme from './LayoutTheme'
 import Home from '@/pages/Home'
 import { Button } from '@radix-ui/themes'
+import HomeAgent from '@/pages/HomeAgent'
 
 const routes = {
   '/': () => <Home />,
   '/count': () => <Counter param1='azrlkazjrzaj' />,
+  '/agents': () => <HomeAgent />,
 }
 
 function Counter({ param1 }) {
