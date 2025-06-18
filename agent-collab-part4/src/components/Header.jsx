@@ -13,11 +13,19 @@ export function Header() {
         margin='0 auto'
         px='5'>
         <Flex gap='6'>
-          <Link href='/'>
+          <Link
+            href='/'
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 8,
+            }}>
             <RocketIcon
               height='22'
               width='22'
             />
+            AppréciAI
           </Link>
         </Flex>
         <Flex gap='6'>

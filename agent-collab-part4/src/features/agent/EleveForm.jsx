@@ -1,4 +1,3 @@
-import EmojiPicker from '@/components/EmojiPicker'
 import {
   $currentEleve,
   addEleve,
@@ -6,33 +5,26 @@ import {
   $criteresEvaluation,
 } from '@/store/store'
 import { useStore } from '@nanostores/react'
-import { CheckIcon } from '@radix-ui/react-icons'
-import {
-  Button,
-  Flex,
-  Heading,
-  Select,
-  Slider,
-  Text,
-  TextArea,
-  TextField,
-} from '@radix-ui/themes'
+import { Flex, Heading, RadioGroup, Strong, Text } from '@radix-ui/themes'
 
 const EleveForm = () => {
   const currentEleve = useStore($currentEleve)
   const criteresEval = useStore($criteresEvaluation)
 
-  const onChange = (key, value) => {
-    updateCurrentEleve({ [key]: value })
+  const onChange = (eleveId, cat, evalId, value) => {
+    updateCurrentEleve({
+      id: eleveId,
+      [cat]: {
+        [evalId]: value,
+      },
+    })
   }
 
   const onSubmit = (e) => {
     e.preventDefault()
-    console.log('Form submitted:', currentEleve)
+    // console.log('Form submitted:', currentEleve)
     addEleve(currentEleve)
   }
-
-  console.log('currentEleve', currentEleve)
 
   return (
     <form
@@ -40,65 +32,55 @@ const EleveForm = () => {
         display: 'flex',
         flexDirection: 'column',
         gap: 18,
-        width: 450,
+        width: '100%',
       }}
       onSubmit={onSubmit}>
-      <Flex
-        direction='column'
-        gap='1'>
-        <label htmlFor={'nom'}>Nom</label>
-        <TextField.Root
-          placeholder='Nom...'
-          value={currentEleve.nom || ''}
-          onChange={(e) => onChange('nom', e.target.value)}
-          resize='vertical'
-        />
-      </Flex>
+      {/* {JSON.stringify(currentEleve)} */}
 
       <Flex
         direction='column'
         gap='1'>
-        <label htmlFor={'prenom'}>Prénom</label>
-        <TextField.Root
-          placeholder='Prénom...'
-          value={currentEleve.prenom || ''}
-          onChange={(e) => onChange('prenom', e.target.value)}
-          resize='vertical'
-        />
+        <Heading>
+          {currentEleve.prenom} {currentEleve.nom}
+        </Heading>
       </Flex>
 
-      <Flex direction='column'>
+      <Flex
+        direction='column'
+        gap='32px'
+        style={{
+          height: '100%',
+          overflowY: 'auto',
+        }}>
         {Object.keys(criteresEval).map((cat) => (
           <Flex
             direction='column'
             key={cat}>
-            <Heading>{criteresEval[cat].titre}</Heading>
+            <Heading size='5'>{criteresEval[cat].titre}</Heading>
 
             <Flex direction='column'>
               {criteresEval[cat].questions.map((item) => (
-                <Flex
+                <RadioGroup.Root
                   direction='column'
-                  key={item.id}>
-                  <Text>{item.question}</Text>
-
+                  key={item.id}
+                  value={currentEleve.evaluations[cat][item.id]}
+                  onValueChange={(valeur) =>
+                    onChange(currentEleve.id, cat, item.id, valeur)
+                  }>
+                  <Strong
+                    style={{
+                      paddingTop: '10px',
+                    }}>
+                    {item.question}
+                  </Strong>
                   {item.reponses.map((res) => (
-                    <Flex key={res.valeur}>
-                      <Text>{res.texte}</Text>
-                    </Flex>
+                    <RadioGroup.Item value={res.valeur}>{res.texte}</RadioGroup.Item>
                   ))}
-                </Flex>
+                </RadioGroup.Root>
               ))}
             </Flex>
           </Flex>
         ))}
-      </Flex>
-
-      {/* Submit action, see onSubmit in the <form> tag above */}
-      <Flex justify='end'>
-        <Button type='submit'>
-          <CheckIcon />
-          Sauver
-        </Button>
       </Flex>
     </form>
   )

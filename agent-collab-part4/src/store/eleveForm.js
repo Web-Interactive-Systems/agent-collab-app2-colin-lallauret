@@ -12,9 +12,48 @@ export const setSelectedEleve = (id) => {
 }
 
 export const updateCurrentEleve = (dataForm) => {
-  const eleve = $currentEleve.get()
-  $currentEleve.set({
-    ...eleve,
-    ...dataForm,
-  })
+  const { id, participation = {}, comportement = {}, autonomie = {} } = dataForm
+
+  let currentEleve = $currentEleve.get()
+
+  currentEleve = {
+    ...currentEleve,
+    evaluations: {
+      participation: {
+        ...currentEleve.evaluations.participation,
+        ...participation,
+      },
+      comportement: {
+        ...currentEleve.evaluations.comportement,
+        ...comportement,
+      },
+      autonomie: {
+        ...currentEleve.evaluations.autonomie,
+        ...autonomie,
+      },
+    },
+  }
+
+  const eleves = $eleves.get()
+  const index = eleves.findIndex((e) => e.id === id)
+
+  eleves[index] = currentEleve
+
+  $eleves.set([...eleves])
+}
+
+// Nouvelle fonction pour mettre à jour l'appréciation
+export const updateAppreciationEleve = (id, appreciation) => {
+  const eleves = $eleves.get()
+  const index = eleves.findIndex((e) => e.id === id)
+
+  if (index !== -1) {
+    const updatedEleve = {
+      ...eleves[index],
+      appreciation: appreciation,
+    }
+
+    eleves[index] = updatedEleve
+    $eleves.set([...eleves])
+  }
 }

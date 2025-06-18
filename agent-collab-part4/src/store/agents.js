@@ -6,63 +6,57 @@ export const $selectedAgentId = atom('')
 export const $agents = atom([
   {
     id: Math.random().toString(),
-    emoji: '🥐',
-    title: 'Cuisto',
-    role: 'Donne-moi des recettes réalisables avec cette liste d’ingrédients, en précisant le nom, le temps de préparation, les ingrédients nécessaires, les étapes, et des suggestions si des éléments manquent.',
-    response_format: 'text',
-    temperature: 0.1,
-    desired_response:
-      'Recette : [Nom de la recette] — Temps : [Durée] — Ingrédients : [liste] — Étapes : [étape 1, étape 2, ...] — Suggestion : [astuce ou variante].',
-  },
-  {
-    id: Math.random().toString(),
-    emoji: '🥊',
-    title: 'Metabo calculo',
-    role: 'Pose-moi les bonnes questions pour calculer mon métabolisme de base (BMR) et mes besoins caloriques journaliers (TDEE), puis donne-moi une analyse complète avec recommandations selon mon objectif.',
+    emoji: '🎯',
+    title: 'Analyste Participation',
+    role: "Analyse les réponses sur la participation de l'élève (discussions, lever de main, initiatives) et rédige la première partie de l'appréciation en 1-2 phrases courtes et bienveillantes.",
     response_format: 'text',
     temperature: 0.7,
     desired_response:
-      'BMR : [valeur] kcal — TDEE : [valeur] kcal — Objectif : [objectif et calories] — Répartition : [protéines]g protéines, [glucides]g glucides, [lipides]g lipides.',
+      '[Prénom] participe [niveau] aux activités de classe et [description des initiatives]. [Point positif ou encouragement].',
   },
+
+  {
+    id: Math.random().toString(),
+    emoji: '🤝',
+    title: 'Analyste Comportement',
+    role: "Analyse les réponses sur le comportement (respect des règles, interactions, gestion émotions) et rédige une phrase sur le savoir-être de l'élève.",
+    response_format: 'text',
+    temperature: 0.7,
+    desired_response:
+      'Son comportement est [qualificatif] avec [description relations/règles]. [Gestion émotionnelle si pertinent].',
+  },
+
+  {
+    id: Math.random().toString(),
+    emoji: '⚡',
+    title: 'Analyste Autonomie',
+    role: "Analyse les réponses sur l'autonomie (organisation, finition des tâches, soin du matériel) et rédige une phrase sur l'autonomie de l'élève.",
+    response_format: 'text',
+    temperature: 0.7,
+    desired_response:
+      "[Prénom] fait preuve d'[niveau] autonomie dans [aspects organisationnels]. [Soin du matériel si pertinent].",
+  },
+
+  {
+    id: Math.random().toString(),
+    emoji: '🌟',
+    title: 'Synthétiseur Points Forts',
+    role: "À partir des 3 analyses précédentes, identifie les 1-2 points forts principaux de l'élève et les formule de manière encourageante.",
+    response_format: 'text',
+    temperature: 0.6,
+    desired_response:
+      'Ses atouts : [1-2 qualités principales]. [Encouragement personnalisé].',
+  },
+
   {
     id: Math.random().toString(),
     emoji: '📝',
-    title: 'Resumo mailo',
-    role: 'Résume cet email en 3 lignes maximum, extrais les mots-clés importants, identifie le ton du message, et propose une réponse rapide si possible.',
+    title: 'Rédacteur Final',
+    role: 'Compile toutes les analyses en une appréciation fluide de maximum 600 caractères, avec un ton bienveillant et constructif pour les parents. Ajoute un conseil ou perspective si nécessaire.',
     response_format: 'text',
-    temperature: 0.7,
+    temperature: 0.5,
     desired_response:
-      'Résumé : [phrase courte résumée] — Mots-clés : [liste] — Ton : [type de ton] — Réponse suggérée : [réponse rapide si utile].',
-  },
-  {
-    id: Math.random().toString(),
-    emoji: '🚀',
-    title: '(1) FitBot',
-    role: 'Pose-moi toutes les questions nécessaires pour calculer mon métabolisme de base (âge, sexe, taille, poids, activité, etc.).',
-    response_format: 'text',
-    temperature: 0.7,
-    desired_response:
-      'Merci, voici les infos : Âge : [âge], Sexe : [homme/femme], Taille : [cm], Poids : [kg], Activité : [niveau ou pas/séances], Objectif : [objectif précisé].',
-  },
-  {
-    id: Math.random().toString(),
-    emoji: '🚀',
-    title: '(2) FitBot',
-    role: 'Donne-moi mes macros journalières et calories pour maintenir mon poids avec ces infos.',
-    response_format: 'text',
-    temperature: 0.7,
-    desired_response:
-      'TDEE : [xxxx] kcal — Répartition : [protéines]g protéines, [glucides]g glucides, [lipides]g lipides — Ratio : [x]% / [y]% / [z]% — Objectif : maintien.',
-  },
-  {
-    id: Math.random().toString(),
-    emoji: '🚀',
-    title: '(3) FitBot',
-    role: 'Propose-moi une ou plusieurs recettes qui correspondent à ces macros : [xxxx kcal], [xx g prot], [xx g glucides], [xx g lipides].',
-    response_format: 'text',
-    temperature: 0.7,
-    desired_response:
-      'Recette : [Nom] — Kcal : [xxx] — P: [x]g / G: [x]g / L: [x]g — Ingrédients : [liste] — Étapes : [étapes 1, 2, 3…].',
+      "Appréciation complète et cohérente combinant participation, comportement, autonomie et points forts, avec éventuellement un axe d'amélioration ou encouragement pour la suite.",
   },
 ])
 

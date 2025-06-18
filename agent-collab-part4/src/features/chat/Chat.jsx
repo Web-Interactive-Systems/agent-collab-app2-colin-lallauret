@@ -8,10 +8,10 @@ function Chat() {
       direction='column'
       gap='4'
       width='100%'
-      height='100%'
+      height='calc(100vh - 62px)'
       p='1'>
       <ChatList />
-      <ChatPrompt />
+      {/* <ChatPrompt /> */}
     </Flex>
   )
 }

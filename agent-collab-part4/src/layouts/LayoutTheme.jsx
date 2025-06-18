@@ -13,7 +13,7 @@ export default function LayoutTheme({ children }) {
         </Box>
         <Box
           width='100%'
-          style={{ height: 'calc(100vh - 42px)' }}
+          style={{ height: 'calc(100vh - 42px)', overflow: 'hidden' }}
           flex='1'>
           {children}
         </Box>
