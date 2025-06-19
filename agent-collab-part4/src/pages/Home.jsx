@@ -1,40 +1,81 @@
+import { useState } from 'react'
 import { Resizable } from '@/components/Resizable'
 // import Agent from '@/features/agent/Agent'
 import Eleve from '@/features/agent/Eleve'
 import Chat from '@/features/chat/Chat'
-import { Flex } from '@radix-ui/themes'
+import { Flex, IconButton } from '@radix-ui/themes'
+import { PinLeftIcon, PinRightIcon } from '@radix-ui/react-icons'
 
 function Home() {
+  const [showChat, setShowChat] = useState(true)
+
+  // Largeur du chat (en px)
+  const chatWidth = 350
+  const closedWidth = 60
+
   return (
     <Flex
-      gap='8'
+      gap='0'
       width='100%'
       height='100%'
-      overflowX="hidden"
-      >
+      overflowX='hidden'>
       <Eleve />
       {/* <Agent /> */}
 
-      <Resizable
-        defaultSize={{ width: 350 }}
-        class='resizable'
+      {/* Pin icon always at the same place */}
+      <IconButton
         style={{
-          background: 'var(--focus-a2)',
-          borderLeft: '1px solid var(--gray-9)',
-          marginLeft: 'auto',
+          position: 'fixed',
+          top: 52,
+          right: 24,
+          zIndex: 1000,
         }}
-        enable={{
-          top: false,
-          right: false,
-          bottom: false,
-          left: true,
-          topRight: false,
-          bottomRight: false,
-          bottomLeft: false,
-          topLeft: false,
+        variant='solid'
+        onClick={() => setShowChat((v) => !v)}
+        aria-label={showChat ? 'Close chat' : 'Open chat'}>
+        {showChat ? <PinRightIcon /> : <PinLeftIcon />}
+      </IconButton>
+
+      <div
+        style={{
+          flexBasis: showChat ? chatWidth : closedWidth,
+          minWidth: showChat ? chatWidth : closedWidth,
+          maxWidth: showChat ? chatWidth : closedWidth,
+          marginLeft: 'auto',
+          height: '100%',
+          transition:
+            'flex-basis 0.4s cubic-bezier(.4,1.2,.4,1), min-width 0.4s cubic-bezier(.4,1.2,.4,1), max-width 0.4s cubic-bezier(.4,1.2,.4,1)',
+          overflow: 'hidden',
+          borderLeft: showChat ? '1px solid var(--gray-9)' : 'none',
+          background: 'none',
+          position: 'relative',
+          display: 'flex',
         }}>
-        <Chat />
-      </Resizable>
+        {showChat ? (
+          <Resizable
+            defaultSize={{ width: chatWidth }}
+            class='resizable'
+            style={{
+              width: '100%',
+              height: '100%',
+              background: 'none',
+              border: 'none',
+              position: 'relative',
+            }}
+            enable={{
+              top: false,
+              right: false,
+              bottom: false,
+              left: true,
+              topRight: false,
+              bottomRight: false,
+              bottomLeft: false,
+              topLeft: false,
+            }}>
+            <Chat />
+          </Resizable>
+        ) : null}
+      </div>
     </Flex>
   )
 }

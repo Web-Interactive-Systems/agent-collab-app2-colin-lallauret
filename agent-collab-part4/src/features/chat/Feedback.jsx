@@ -1,226 +1,157 @@
-import { onAgent } from '@/actions/agent'
-import { PlayIcon } from '@radix-ui/react-icons'
-import { Flex, IconButton, TextArea } from '@radix-ui/themes'
-import {
-  $currentEleve,
-  $messages,
-  addMessage,
-  updateMessages,
-  $criteresEvaluation,
-  $agents,
-} from '@/store/store'
+import '../../utils/feedback-styles.scss'
+
+import { Color } from '@tiptap/extension-color'
+import ListItem from '@tiptap/extension-list-item'
+import TextStyle from '@tiptap/extension-text-style'
+import { EditorProvider, useCurrentEditor } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import { PlayIcon, UpdateIcon } from '@radix-ui/react-icons'
+import { Flex, IconButton } from '@radix-ui/themes'
+import { $currentEleve } from '@/store/store'
 import { updateAppreciationEleve } from '@/store/eleveForm'
+import {
+  onGenerateAppreciation,
+  isEvaluationComplete,
+  $isGeneratingAppreciation,
+} from '@/store/feedback'
 import { useStore } from '@nanostores/react'
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 
-function constructCtxArray(originalArray) {
-  const result = []
-  if (originalArray.length > 3) result.push(originalArray.at(-3), originalArray.at(-2))
-  if (originalArray.length > 1) result.push(originalArray[1])
-  if (originalArray.length > 0) result.push(originalArray[0])
-  return result
+// Barre d'outils simplifiée pour l'appréciation
+const MenuBar = () => {
+  const { editor } = useCurrentEditor()
+
+  if (!editor) {
+    return null
+  }
+
+  return (
+    <div className='feedback-control-group'>
+      <div className='feedback-button-group'>
+        <button
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          disabled={!editor.can().chain().focus().toggleBold().run()}
+          className={editor.isActive('bold') ? 'is-active' : ''}
+          title='Gras'>
+          <strong>B</strong>
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          disabled={!editor.can().chain().focus().toggleItalic().run()}
+          className={editor.isActive('italic') ? 'is-active' : ''}
+          title='Italique'>
+          <em>I</em>
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleStrike().run()}
+          disabled={!editor.can().chain().focus().toggleStrike().run()}
+          className={editor.isActive('strike') ? 'is-active' : ''}
+          title='Barré'>
+          <s>S</s>
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          className={editor.isActive('bulletList') ? 'is-active' : ''}
+          title='Liste à puces'>
+          •
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          className={editor.isActive('orderedList') ? 'is-active' : ''}
+          title='Liste numérotée'>
+          1.
+        </button>
+        <button
+          onClick={() => editor.chain().focus().undo().run()}
+          disabled={!editor.can().chain().focus().undo().run()}
+          title='Annuler'>
+          ↶
+        </button>
+        <button
+          onClick={() => editor.chain().focus().redo().run()}
+          disabled={!editor.can().chain().focus().redo().run()}
+          title='Refaire'>
+          ↷
+        </button>
+      </div>
+    </div>
+  )
 }
 
-// Fonction pour nettoyer les balises <think> (même logique que dans json.js)
-function cleanThinkTags(text = '') {
-  return text.replace(/<think>[\s\S]*?<\/think>/gi, '')
+// Composant éditeur avec synchronisation
+const AppreciationEditor = () => {
+  const { editor } = useCurrentEditor()
+  const currentEleve = useStore($currentEleve)
+
+  // 🔥 FIX : Synchroniser le contenu de l'éditeur avec le store
+  useEffect(() => {
+    if (!editor || !currentEleve) return
+
+    // Gérer le cas où il n'y a pas d'appréciation (élève sans appréciation)
+    let content
+    if (currentEleve.appreciation && currentEleve.appreciation.trim()) {
+      // Si l'appréciation existe et n'est pas vide
+      content = currentEleve.appreciation.includes('<')
+        ? currentEleve.appreciation
+        : `<p>${currentEleve.appreciation.replace(/\n/g, '</p><p>')}</p>`
+    } else {
+      // Si pas d'appréciation ou appréciation vide, vider l'éditeur
+      content = '<p></p>'
+    }
+
+    // Mettre à jour uniquement si le contenu a changé
+    if (editor.getHTML() !== content) {
+      editor.commands.setContent(content, false)
+    }
+  }, [editor, currentEleve?.id, currentEleve?.appreciation]) // 🔥 Ajouter l'ID pour détecter le changement d'élève
+
+  // Gérer les changements dans l'éditeur
+  useEffect(() => {
+    if (!editor || !currentEleve) return
+
+    const handleUpdate = () => {
+      const html = editor.getHTML()
+      updateAppreciationEleve(currentEleve.id, html)
+    }
+
+    editor.on('update', handleUpdate)
+
+    return () => {
+      editor.off('update', handleUpdate)
+    }
+  }, [editor, currentEleve?.id])
+
+  return null
 }
+
+// Extensions TipTap
+const extensions = [
+  Color.configure({ types: [TextStyle.name, ListItem.name] }),
+  TextStyle.configure({ types: [ListItem.name] }),
+  StarterKit.configure({
+    bulletList: {
+      keepMarks: true,
+      keepAttributes: false,
+    },
+    orderedList: {
+      keepMarks: true,
+      keepAttributes: false,
+    },
+  }),
+]
 
 function Feedback() {
   const currentEleve = useStore($currentEleve)
-  const criteresEvaluation = useStore($criteresEvaluation)
-  const agents = useStore($agents)
-  const [isGenerating, setIsGenerating] = useState(false)
+  const isGenerating = useStore($isGeneratingAppreciation)
 
-  const { participation, comportement, autonomie } = currentEleve.evaluations || {}
+  // Vérifier si l'évaluation est complète
+  const playDisable = !isEvaluationComplete(currentEleve)
 
-  const playDisable = !(
-    participation?.part_1 != null &&
-    participation?.part_2 != null &&
-    participation?.part_3 != null &&
-    comportement?.comp_1 != null &&
-    comportement?.comp_2 != null &&
-    comportement?.comp_3 != null &&
-    autonomie?.auto_1 != null &&
-    autonomie?.auto_2 != null &&
-    autonomie?.auto_3 != null
-  )
-
-  // Fonction pour convertir les évaluations en texte en utilisant criteresEvaluation
-  const convertEvaluationToText = (evaluations) => {
-    let textDescription = "Évaluation de l'élève :\n\n"
-
-    // Parcourir chaque catégorie (participation, comportement, autonomie)
-    Object.keys(evaluations).forEach((categoryKey) => {
-      const category = criteresEvaluation[categoryKey]
-      const categoryEvaluations = evaluations[categoryKey]
-
-      if (category && categoryEvaluations) {
-        textDescription += `${category.titre.toUpperCase()} :\n`
-
-        // Parcourir chaque question de la catégorie
-        category.questions.forEach((question) => {
-          const valeurReponse = categoryEvaluations[question.id]
-
-          if (valeurReponse != null) {
-            // Trouver le texte correspondant à la valeur
-            const reponseObj = question.reponses.find((r) => r.valeur === valeurReponse)
-            const texteReponse = reponseObj ? reponseObj.texte : 'Non défini'
-
-            textDescription += `- ${question.question} : ${texteReponse}\n`
-          }
-        })
-
-        textDescription += '\n'
-      }
-    })
-
-    return textDescription
-  }
-
-  // Fonction pour mettre à jour l'appréciation localement
-  const handleAppreciationChange = (e) => {
-    const newAppreciation = e.target.value
-    updateAppreciationEleve(currentEleve.id, newAppreciation)
-  }
-
-  const onGenerateAppreciation = async () => {
-    if (playDisable || isGenerating) return
-
-    setIsGenerating(true)
-
-    // Vider l'ancien contexte/historique des messages
-    updateMessages([])
-
-    // Convertir les évaluations en texte descriptif
-    const evaluationText = convertEvaluationToText(currentEleve.evaluations)
-
-    // Construire le nom complet de l'élève
-    const nomComplet = [currentEleve.prenom, currentEleve.nom].filter(Boolean).join(' ')
-    const eleveInfo = nomComplet || "l'élève"
-
-    // Déterminer le genre pour l'accord grammatical
-    const genre = currentEleve.sexe === 'F' ? 'féminin' : 'masculin'
-    const articleDefini = currentEleve.sexe === 'F' ? 'cette élève' : 'cet élève'
-
-    // Ajouter le message utilisateur avec les informations complètes de l'élève
-    addMessage({
-      role: 'user',
-      content: `Génère une appréciation pour ${eleveInfo} (${
-        currentEleve.sexe === 'F' ? 'fille' : 'garçon'
-      }) basée sur ces évaluations :\n\n${evaluationText}`,
-      id: Math.random().toString(),
-    })
-
-    const messages = $messages.get()
-    const contextInputs = constructCtxArray(messages)
-
-    try {
-      // Utiliser les agents du store
-      const steps = agents
-
-      for (let i = 0, len = steps.length; i < len; i++) {
-        const agent = steps[i]
-
-        addMessage({
-          role: 'assistant',
-          content: `🔄 ${agent.title} en cours...`,
-          id: Math.random().toString(),
-          completed: false,
-          agent: agent,
-        })
-
-        let cloned = $messages.get()
-
-        // Construire le prompt avec les informations complètes de l'élève
-        const promptWithStudentInfo = `Informations sur l'élève :
-- Nom : ${eleveInfo}
-- Sexe : ${currentEleve.sexe} (${genre})
-- Instructions : Utilise les accords grammaticaux appropriés selon le genre dans toute l'appréciation.
-
-${evaluationText}`
-
-        // Appel de l'agent
-        const stream = await onAgent({
-          prompt: promptWithStudentInfo,
-          agent,
-          contextInputs,
-        })
-
-        // Traitement du stream
-        for await (const part of stream) {
-          let token = part.choices[0]?.delta?.content || ''
-
-          // Nettoyer les balises <think> du token
-          token = cleanThinkTags(token)
-
-          const last = cloned.at(-1)
-
-          // Remplacer le message "en cours" par le contenu réel au premier token
-          if (last.content.includes('🔄') && token) {
-            cloned[cloned.length - 1] = {
-              ...last,
-              content: token,
-            }
-          } else {
-            cloned[cloned.length - 1] = {
-              ...last,
-              content: cleanThinkTags(last.content + token),
-            }
-          }
-
-          updateMessages([...cloned])
-        }
-
-        // Marquer comme terminé et nettoyer le contenu final
-        const last = cloned.at(-1)
-        const cleanedContent = cleanThinkTags(last.content).trim()
-
-        cloned[cloned.length - 1] = {
-          ...last,
-          content: cleanedContent,
-          completed: true,
-        }
-
-        // Si c'est le dernier agent (Rédacteur Final), mettre à jour l'appréciation
-        if (i === steps.length - 1) {
-          updateAppreciationEleve(currentEleve.id, cleanedContent)
-        }
-
-        // Ajouter le prochain message assistant si ce n'est pas le dernier
-        if (i !== steps.length - 1) {
-          cloned = [
-            ...cloned,
-            {
-              role: 'assistant',
-              content: '',
-              id: Math.random().toString(),
-              completed: false,
-            },
-          ]
-        }
-
-        updateMessages([...cloned])
-      }
-
-      // Message de fin
-      addMessage({
-        role: 'assistant',
-        content: '✅ Appréciation générée avec succès !',
-        id: Math.random().toString(),
-        completed: true,
-      })
-    } catch (error) {
-      addMessage({
-        role: 'assistant',
-        content: `❌ Erreur lors de la génération: ${error.message}`,
-        id: Math.random().toString(),
-        completed: true,
-      })
-    } finally {
-      setIsGenerating(false)
-    }
-  }
+  // 🔥 FIX : Contenu initial vide si pas d'appréciation
+  const initialContent =
+    currentEleve?.appreciation && currentEleve.appreciation.trim()
+      ? currentEleve.appreciation
+      : '<p></p>'
 
   return (
     <>
@@ -230,18 +161,20 @@ ${evaluationText}`
         width='100%'
         justify='center'
         align='center'>
-        <TextArea
-          placeholder='Appréciation...'
-          resize='vertical'
-          size='2'
-          value={(currentEleve?.appreciation || '').trim()}
-          onChange={handleAppreciationChange}
-          style={{
-            width: '100%',
-            minHeight: 150,
-            minWidth: 300,
-          }}
-        />
+        <div className='feedback-editor-container'>
+          <EditorProvider
+            slotBefore={<MenuBar />}
+            extensions={extensions}
+            content={initialContent}
+            editorProps={{
+              attributes: {
+                class: 'feedback-editor',
+                placeholder: 'Appréciation...',
+              },
+            }}>
+            <AppreciationEditor />
+          </EditorProvider>
+        </div>
       </Flex>
 
       <Flex
@@ -251,7 +184,7 @@ ${evaluationText}`
           size='3'
           disabled={playDisable || isGenerating}
           onClick={onGenerateAppreciation}>
-          <PlayIcon />
+          <UpdateIcon />
         </IconButton>
       </Flex>
     </>

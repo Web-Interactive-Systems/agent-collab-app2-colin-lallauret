@@ -1,10 +1,10 @@
-import { MoonIcon, RocketIcon, DrawingPinFilledIcon } from '@radix-ui/react-icons'
+import { MoonIcon, RocketIcon, DrawingPinFilledIcon, GearIcon } from '@radix-ui/react-icons'
 import { Button, Flex } from '@radix-ui/themes'
 import { Link } from 'raviger'
 
 export function Header() {
   return (
-    <Flex style={{ boxShadow: 'var(--shadow-3)', height: 42, width: '100vw' }}>
+    <Flex style={{ borderBottom: '1px solid #e0e0e0', height: 42, width: '100vw' }}>
       <Flex
         justify='between'
         align='center'
@@ -45,7 +45,7 @@ export function Header() {
           <Button
             variant='ghost'
             size='4'>
-            <MoonIcon
+            <GearIcon
               height='22'
               width='22'
             />

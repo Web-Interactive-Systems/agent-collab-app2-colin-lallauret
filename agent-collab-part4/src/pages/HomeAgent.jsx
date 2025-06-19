@@ -11,12 +11,12 @@ function HomeAgent() {
       height='100%'>
       <Agent />
 
-      <Resizable
+      {/* <Resizable
         defaultSize={{ width: 550 }}
         class='resizable'
         style={{
           background: 'var(--focus-a3)',
-          borderLeft: '1px solid var(--gray-9)',
+          borderLeft: '1px solid #e0e0e0',
           marginLeft: 'auto',
         }}
         enable={{
@@ -30,7 +30,7 @@ function HomeAgent() {
           topLeft: false,
         }}>
         <Chat />
-      </Resizable>
+      </Resizable> */}
     </Flex>
   )
 }

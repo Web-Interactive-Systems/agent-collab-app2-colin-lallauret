@@ -3,21 +3,53 @@ import {
   addEleve,
   updateCurrentEleve,
   $criteresEvaluation,
+  onGenerateAppreciation,
 } from '@/store/store'
 import { useStore } from '@nanostores/react'
-import { Flex, Heading, RadioGroup, Strong, Text } from '@radix-ui/themes'
+import { ArrowRightIcon, RocketIcon } from '@radix-ui/react-icons'
+import {
+  Avatar,
+  Blockquote,
+  Button,
+  Flex,
+  Heading,
+  IconButton,
+  RadioGroup,
+  Strong,
+  Tabs,
+  Text,
+} from '@radix-ui/themes'
+import React from 'react'
 
 const EleveForm = () => {
   const currentEleve = useStore($currentEleve)
   const criteresEval = useStore($criteresEvaluation)
 
   const onChange = (eleveId, cat, evalId, value) => {
+    // Vérifie si la question était non répondue avant ce changement
+    const wasUnanswered = currentEleve.evaluations?.[cat]?.[evalId] == null
     updateCurrentEleve({
       id: eleveId,
       [cat]: {
         [evalId]: value,
       },
     })
+
+    // Après la mise à jour, vérifie si toutes les questions de la catégorie sont maintenant répondues
+    const allAnswered = criteresEval[cat].questions.every(
+      (item) =>
+        (cat === activeTab && item.id === evalId
+          ? value
+          : currentEleve.evaluations?.[cat]?.[item.id]) != null,
+    )
+
+    // Si la question vient d'être répondue et que toutes sont maintenant répondues, passe à la tab suivante
+    if (wasUnanswered && allAnswered) {
+      const currentTabIndex = tabKeys.indexOf(cat)
+      if (currentTabIndex < tabKeys.length - 1) {
+        setActiveTab(tabKeys[currentTabIndex + 1])
+      }
+    }
   }
 
   const onSubmit = (e) => {
@@ -25,6 +57,23 @@ const EleveForm = () => {
     // console.log('Form submitted:', currentEleve)
     addEleve(currentEleve)
   }
+
+  const [activeTab, setActiveTab] = React.useState(Object.keys(criteresEval)[0])
+
+  const tabKeys = Object.keys(criteresEval)
+  const currentTabIndex = tabKeys.indexOf(activeTab)
+  const isLastTab = currentTabIndex === tabKeys.length - 1
+
+  const goToNextTab = () => {
+    if (!isLastTab) {
+      setActiveTab(tabKeys[currentTabIndex + 1])
+    }
+  }
+
+  // Vérifie si toutes les questions de la dernière tab ont une réponse non nulle
+  const isLastTabComplete = criteresEval[activeTab]?.questions.every(
+    (item) => currentEleve.evaluations?.[activeTab]?.[item.id] != null,
+  )
 
   return (
     <form
@@ -35,14 +84,20 @@ const EleveForm = () => {
         width: '100%',
       }}
       onSubmit={onSubmit}>
-      {/* {JSON.stringify(currentEleve)} */}
-
       <Flex
         direction='column'
         gap='1'>
-        <Heading>
-          {currentEleve.prenom} {currentEleve.nom}
-        </Heading>
+        <Blockquote
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}>
+          <Avatar src={currentEleve.picture} />
+          <Heading>
+            {currentEleve.prenom} {currentEleve.nom}
+          </Heading>
+        </Blockquote>
       </Flex>
 
       <Flex
@@ -52,35 +107,117 @@ const EleveForm = () => {
           height: '100%',
           overflowY: 'auto',
         }}>
-        {Object.keys(criteresEval).map((cat) => (
-          <Flex
-            direction='column'
-            key={cat}>
-            <Heading size='5'>{criteresEval[cat].titre}</Heading>
-
-            <Flex direction='column'>
-              {criteresEval[cat].questions.map((item) => (
-                <RadioGroup.Root
-                  direction='column'
-                  key={item.id}
-                  value={currentEleve.evaluations[cat][item.id]}
-                  onValueChange={(valeur) =>
-                    onChange(currentEleve.id, cat, item.id, valeur)
-                  }>
-                  <Strong
-                    style={{
-                      paddingTop: '10px',
-                    }}>
-                    {item.question}
-                  </Strong>
-                  {item.reponses.map((res) => (
-                    <RadioGroup.Item value={res.valeur}>{res.texte}</RadioGroup.Item>
-                  ))}
-                </RadioGroup.Root>
-              ))}
-            </Flex>
-          </Flex>
-        ))}
+        <Tabs.Root
+          value={activeTab}
+          onValueChange={setActiveTab}>
+          <Tabs.List>
+            {tabKeys.map((cat) => {
+              // Vérifie si toutes les questions de la catégorie sont remplies
+              const allAnswered = criteresEval[cat].questions.every(
+                (item) => currentEleve.evaluations?.[cat]?.[item.id] != null,
+              )
+              return (
+                <Tabs.Trigger
+                  key={cat}
+                  value={cat}
+                  style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  {criteresEval[cat].titre}
+                  <span style={{ marginLeft: 6 }}>
+                    {/* Case à cocher remplie ou vide */}
+                    {allAnswered ? (
+                      <svg
+                        width='18'
+                        height='18'
+                        viewBox='0 0 18 18'
+                        style={{ verticalAlign: 'middle' }}>
+                        <rect
+                          x='2'
+                          y='2'
+                          width='14'
+                          height='14'
+                          rx='3'
+                          fill='#4caf50'
+                          stroke='#4caf50'
+                          strokeWidth='2'
+                        />
+                        <polyline
+                          points='5,10 8,13 13,6'
+                          fill='none'
+                          stroke='#fff'
+                          strokeWidth='2'
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        width='18'
+                        height='18'
+                        viewBox='0 0 18 18'
+                        style={{ verticalAlign: 'middle' }}>
+                        <rect
+                          x='2'
+                          y='2'
+                          width='14'
+                          height='14'
+                          rx='3'
+                          fill='none'
+                          stroke='#aaa'
+                          strokeWidth='2'
+                        />
+                      </svg>
+                    )}
+                  </span>
+                </Tabs.Trigger>
+              )
+            })}
+          </Tabs.List>
+          {tabKeys.map((cat) => (
+            <Tabs.Content
+              key={cat}
+              value={cat}>
+              <Flex
+                direction='column'
+                gap='4'>
+                {criteresEval[cat].questions.map((item) => (
+                  <RadioGroup.Root
+                    direction='column'
+                    key={item.id}
+                    value={currentEleve.evaluations[cat][item.id]}
+                    onValueChange={(valeur) =>
+                      onChange(currentEleve.id, cat, item.id, valeur)
+                    }>
+                    <Strong style={{ paddingTop: '10px' }}>{item.question}</Strong>
+                    {item.reponses.map((res) => (
+                      <RadioGroup.Item
+                        key={res.valeur}
+                        value={res.valeur}>
+                        {res.texte}
+                      </RadioGroup.Item>
+                    ))}
+                  </RadioGroup.Root>
+                ))}
+                {!isLastTab && activeTab === cat && (
+                  <Button
+                    type='button'
+                    style={{ marginTop: 16, alignSelf: 'flex-end' }}
+                    onClick={goToNextTab}>
+                    Continuer
+                    <ArrowRightIcon />
+                  </Button>
+                )}
+                {isLastTab && activeTab === cat && (
+                  <Button
+                    type='button'
+                    style={{ marginTop: 16, alignSelf: 'flex-end' }}
+                    onClick={onGenerateAppreciation}
+                    disabled={!isLastTabComplete}>
+                    Générer
+                    <RocketIcon />
+                  </Button>
+                )}
+              </Flex>
+            </Tabs.Content>
+          ))}
+        </Tabs.Root>
       </Flex>
     </form>
   )
