@@ -47,7 +47,7 @@ export const $eleves = atom([
       },
     },
     appreciation:
-      "Emma a des difficultés significatives dans plusieurs domaines. Elle manque d'engagement en classe, ne participe pas aux discussions et n'a pas d'initiatives. Son comportement est agité, avec des conflits avec ses camarades et des émotions difficiles à gérer. Elle n'organise pas son travail et néglige son matériel. Il serait utile de lui offrir un soutien personnalisé pour améliorer sa participation, sa gestion des émotions et sa responsabilité.",
+      'Emma Dupont a montré un fort besoin d’auto-organisation et de confiance en soi, mais elle reste encore en phase de développement dans plusieurs domaines. Elle n’a pas encore participé aux discussions de classe ni levé la main pour répondre, ce qui limite sa contribution. Son comportement est souvent marqué par des conflits avec ses camarades et une gestion des émotions difficile. En revanche, elle a un sens du travail et ne se lasse jamais de terminer ses tâches sans aide. Il serait utile de lui offrir des opportunités de prise d’initiative et de dialogue pour renforcer sa confiance en soi. Emma, je te soutiens dans ton élan et espère que tu vas progresser vers une meilleure autonomie et participation.',
   },
   {
     id: Math.random().toString(),

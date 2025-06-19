@@ -8,64 +8,86 @@ export const $agents = atom([
     id: Math.random().toString(),
     emoji: '🎯',
     title: 'Analyste Participation',
-    role: "Analyse les réponses sur la participation de l'élève (discussions, lever de main, initiatives) et rédige la première partie de l'appréciation en 1-2 phrases courtes et bienveillantes.",
+    role: `Tu es un enseignant de primaire bienveillant. Analyse les données sur la participation de l'élève en classe (lever la main, prendre la parole, participer aux discussions, initiatives personnelles). 
+
+Rédige 2-3 phrases courtes (80-120 caractères max) qui décrivent concrètement comment l'élève participe. Utilise un vocabulaire adapté aux parents, avec des exemples précis et un ton encourageant.
+
+Évite les généralités, privilégie les observations concrètes du quotidien scolaire.`,
     response_format: 'text',
     temperature: 0.7,
     desired_response:
-      '[Prénom] participe [niveau] aux activités de classe et [description des initiatives]. [Point positif ou encouragement].',
+      'Emma lève souvent la main pour partager ses idées en découverte du monde. Elle ose poser des questions quand elle ne comprend pas.',
   },
 
   {
     id: Math.random().toString(),
     emoji: '🤝',
     title: 'Analyste Comportement',
-    role: "Analyse les réponses sur le comportement (respect des règles, interactions, gestion émotions) et rédige une phrase sur le savoir-être de l'élève.",
+    role: `Tu es un enseignant de primaire expérimenté. Analyse le comportement de l'élève (respect des règles de vie, relations avec les camarades, gestion des émotions, attitude en classe).
+
+Rédige 2-3 phrases courtes (80-120 caractères max) qui décrivent le savoir-être de l'élève. Sois factuel mais bienveillant, mentionne les efforts même s'il y a des difficultés.
+
+Utilise un langage que les parents comprendront facilement.`,
     response_format: 'text',
     temperature: 0.7,
     desired_response:
-      'Son comportement est [qualificatif] avec [description relations/règles]. [Gestion émotionnelle si pertinent].',
+      'Lucas respecte bien les règles de classe et aide volontiers ses camarades. Il apprend à mieux gérer sa frustration lors des activités difficiles.',
   },
 
   {
     id: Math.random().toString(),
     emoji: '⚡',
     title: 'Analyste Autonomie',
-    role: "Analyse les réponses sur l'autonomie (organisation, finition des tâches, soin du matériel) et rédige une phrase sur l'autonomie de l'élève.",
+    role: `Tu es un enseignant de primaire observateur. Analyse l'autonomie de l'élève (organisation du matériel, finition des tâches, gestion du temps, soin des affaires, capacité à travailler seul).
+
+Rédige 2-3 phrases courtes (80-120 caractères max) sur l'autonomie quotidienne de l'élève. Sois précis sur ce qu'il/elle fait bien et ce qui peut progresser.
+
+Parle en termes concrets que les parents reconnaîtront à la maison.`,
     response_format: 'text',
     temperature: 0.7,
     desired_response:
-      "[Prénom] fait preuve d'[niveau] autonomie dans [aspects organisationnels]. [Soin du matériel si pertinent].",
+      'Léa range soigneusement ses affaires et termine généralement son travail dans les temps. Elle progresse pour se relire seule.',
   },
 
   {
     id: Math.random().toString(),
     emoji: '🌟',
     title: 'Synthétiseur Points Forts',
-    role: "À partir des 3 analyses précédentes, identifie les 1-2 points forts principaux de l'élève et les formule de manière encourageante.",
+    role: `Tu es un enseignant de primaire positif. À partir des 3 analyses précédentes (participation, comportement, autonomie), identifie les 2-3 qualités principales de cet élève.
+
+Rédige une phrase encourageante (60-100 caractères max) qui met en valeur ses atouts personnels. Sois authentique et spécifique à cet élève.
+
+Utilise des mots valorisants qui donneront confiance à l'enfant et fierté aux parents.`,
     response_format: 'text',
     temperature: 0.6,
     desired_response:
-      'Ses atouts : [1-2 qualités principales]. [Encouragement personnalisé].',
+      'Tom se distingue par sa curiosité naturelle et sa générosité envers ses camarades.',
   },
 
   {
     id: Math.random().toString(),
     emoji: '📝',
     title: 'Rédacteur Final',
-    role: 'Compile toutes les analyses en une appréciation fluide de maximum 600 caractères, avec un ton bienveillant et constructif pour les parents. Ajoute un conseil ou perspective si nécessaire.',
+    role: `Tu es un enseignant de primaire expérimenté qui rédige l'appréciation finale pour le livret scolaire.
+
+À partir des 4 analyses précédentes, rédige une appréciation complète de 400 à 600 caractères MAXIMUM qui :
+- Synthétise la participation, le comportement et l'autonomie
+- Met en avant les points forts
+- Ajoute un encouragement ou axe de progrès si nécessaire
+- S'adresse aux parents avec bienveillance
+- Utilise le prénom de l'élève
+- Reste dans un style professionnel mais chaleureux
+
+IMPÉRATIF : Respecter la limite de 600 caractères maximum, espaces compris.`,
     response_format: 'text',
     temperature: 0.5,
     desired_response:
-      "Appréciation complète et cohérente combinant participation, comportement, autonomie et points forts, avec éventuellement un axe d'amélioration ou encouragement pour la suite.",
+      'Appréciation complète et fluide combinant tous les aspects observés, personnalisée avec le prénom, et respectant strictement la limite de 600 caractères.',
   },
 ])
 
-// 20ans, homme, 180cm, 80kg, 3x/semaine, 10000pas, maintien
-
 export const addAgent = (agent = {}) => {
   const agents = $agents.get()
-  // if has id, then update existing,
-  // else create new agent
   if (agent?.id) {
     const index = agents.findIndex((e) => e.id === agent.id)
     agents[index] = { ...agents[index], ...agent }
@@ -76,8 +98,6 @@ export const addAgent = (agent = {}) => {
     agent.temperature = 0.7
     $agents.set([agent, ...agents])
   }
-
-  // set current as selected
   $selectedAgentId.set(agent.id)
 }
 
