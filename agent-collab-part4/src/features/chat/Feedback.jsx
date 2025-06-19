@@ -18,7 +18,6 @@ import { $isFeedbackFocused, focusFeedback, blurFeedback } from '@/store/feedbac
 import { useStore } from '@nanostores/react'
 import React, { useEffect } from 'react'
 
-// Barre d'outils pour l'appréciation
 const MenuBar = () => {
   const { editor } = useCurrentEditor()
   const isFocused = useStore($isFeedbackFocused)
@@ -80,13 +79,11 @@ const MenuBar = () => {
   )
 }
 
-// Composant éditeur avec gestion du focus modal
 const AppreciationEditor = () => {
   const { editor } = useCurrentEditor()
   const currentEleve = useStore($currentEleve)
   const isFocused = useStore($isFeedbackFocused)
 
-  // Synchronisation du contenu
   useEffect(() => {
     if (!editor || !currentEleve) return
 
@@ -104,7 +101,6 @@ const AppreciationEditor = () => {
     }
   }, [editor, currentEleve?.id, currentEleve?.appreciation])
 
-  // Gestion des événements
   useEffect(() => {
     if (!editor || !currentEleve) return
 
@@ -118,7 +114,6 @@ const AppreciationEditor = () => {
     }
 
     const handleKeyDown = (view, event) => {
-      // Escape pour sortir du mode focus
       if (event.key === 'Escape' && isFocused) {
         event.preventDefault()
         blurFeedback()
@@ -142,7 +137,6 @@ const AppreciationEditor = () => {
   return null
 }
 
-// Extensions TipTap
 const extensions = [
   Color.configure({ types: [TextStyle.name, ListItem.name] }),
   TextStyle.configure({ types: [ListItem.name] }),
@@ -163,7 +157,6 @@ function Feedback() {
       ? currentEleve.appreciation
       : '<p></p>'
 
-  // Gérer le clic sur le backdrop
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       blurFeedback()
@@ -172,7 +165,6 @@ function Feedback() {
 
   return (
     <>
-      {/* Backdrop blur quand focusé */}
       {isFocused && (
         <div
           className='feedback-backdrop'
@@ -187,7 +179,6 @@ function Feedback() {
         justify='center'
         align='center'
         className={isFocused ? 'feedback-focused' : ''}>
-        {/* Éditeur qui peut devenir modal */}
         <div
           className={`feedback-editor-container ${
             isFocused ? 'modal-mode' : 'normal-mode'
@@ -218,7 +209,6 @@ function Feedback() {
         </div>
       </Flex>
 
-      {/* Actions - toujours visibles */}
       <Flex
         justify='between'
         align='center'

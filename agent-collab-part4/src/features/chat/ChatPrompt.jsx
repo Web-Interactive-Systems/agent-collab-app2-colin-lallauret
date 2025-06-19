@@ -154,7 +154,6 @@ function ChatPrompt() {
             const canSend = !isPromptEmpty && e.key === 'Enter'
             const mod = e.metaKey || e.ctrlKey || e.altKey || e.shiftKey
             if (canSend && !mod) {
-              // Prevent default behavior of Enter key
               e.preventDefault()
               onSendPrompt()
             }

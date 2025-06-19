@@ -1,6 +1,5 @@
 import { atom } from 'nanostores'
 
-// Fonction pour générer une URL d'avatar aléatoire basée sur le sexe
 function genererAvatarUrl(prenom, nom, sexe) {
   const seed = `${prenom}-${nom}-${Math.random().toString(36).substr(2, 9)}` // Ajout de random pour unicité
   const gender = sexe === 'F' ? 'female' : 'male'
@@ -8,7 +7,6 @@ function genererAvatarUrl(prenom, nom, sexe) {
   return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&gender=${gender}&size=128`
 }
 
-// Fonction utilitaire pour générer des notes aléatoires
 function genererNotesAleatoires() {
   return {
     lecture: Math.floor(Math.random() * 5) + 1,

@@ -42,7 +42,6 @@ export const updateCurrentEleve = (dataForm) => {
   $eleves.set([...eleves])
 }
 
-// Nouvelle fonction pour mettre à jour l'appréciation
 export const updateAppreciationEleve = (id, appreciation) => {
   const eleves = $eleves.get()
   const index = eleves.findIndex((e) => e.id === id)

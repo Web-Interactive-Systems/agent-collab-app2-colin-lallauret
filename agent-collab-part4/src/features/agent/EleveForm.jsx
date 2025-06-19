@@ -26,7 +26,6 @@ const EleveForm = () => {
   const criteresEval = useStore($criteresEvaluation)
 
   const onChange = (eleveId, cat, evalId, value) => {
-    // Vérifie si la question était non répondue avant ce changement
     const wasUnanswered = currentEleve.evaluations?.[cat]?.[evalId] == null
     updateCurrentEleve({
       id: eleveId,
@@ -35,7 +34,6 @@ const EleveForm = () => {
       },
     })
 
-    // Après la mise à jour, vérifie si toutes les questions de la catégorie sont maintenant répondues
     const allAnswered = criteresEval[cat].questions.every(
       (item) =>
         (cat === activeTab && item.id === evalId
@@ -43,7 +41,6 @@ const EleveForm = () => {
           : currentEleve.evaluations?.[cat]?.[item.id]) != null,
     )
 
-    // Si la question vient d'être répondue et que toutes sont maintenant répondues, passe à la tab suivante
     if (wasUnanswered && allAnswered) {
       const currentTabIndex = tabKeys.indexOf(cat)
       if (currentTabIndex < tabKeys.length - 1) {
@@ -54,7 +51,6 @@ const EleveForm = () => {
 
   const onSubmit = (e) => {
     e.preventDefault()
-    // console.log('Form submitted:', currentEleve)
     addEleve(currentEleve)
   }
 
@@ -70,7 +66,6 @@ const EleveForm = () => {
     }
   }
 
-  // Vérifie si toutes les questions de la dernière tab ont une réponse non nulle
   const isLastTabComplete = criteresEval[activeTab]?.questions.every(
     (item) => currentEleve.evaluations?.[activeTab]?.[item.id] != null,
   )
@@ -112,7 +107,6 @@ const EleveForm = () => {
           onValueChange={setActiveTab}>
           <Tabs.List>
             {tabKeys.map((cat) => {
-              // Vérifie si toutes les questions de la catégorie sont remplies
               const allAnswered = criteresEval[cat].questions.every(
                 (item) => currentEleve.evaluations?.[cat]?.[item.id] != null,
               )
@@ -123,7 +117,6 @@ const EleveForm = () => {
                   style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   {criteresEval[cat].titre}
                   <span style={{ marginLeft: 6 }}>
-                    {/* Case à cocher remplie ou vide */}
                     {allAnswered ? (
                       <svg
                         width='18'

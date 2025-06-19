@@ -9,7 +9,6 @@ import { Cross1Icon } from '@radix-ui/react-icons'
 function Eleve() {
   const selectedEleveId = useStore($selectedEleveId)
 
-  // Function to clear the selected eleve
   const handleClose = () => {
     $selectedEleveId.set(null)
   }

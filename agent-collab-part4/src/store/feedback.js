@@ -10,7 +10,6 @@ import {
 } from '@/store/store'
 import { updateAppreciationEleve } from '@/store/eleveForm'
 
-// État pour le status de génération
 export const $isGeneratingAppreciation = atom(false)
 
 function constructCtxArray(originalArray) {
@@ -21,12 +20,10 @@ function constructCtxArray(originalArray) {
   return result
 }
 
-// Fonction pour nettoyer les balises <think>
 function cleanThinkTags(text = '') {
   return text.replace(/<think>[\s\S]*?<\/think>/gi, '')
 }
 
-// Fonction pour convertir les évaluations en texte
 function convertEvaluationToText(evaluations) {
   const criteresEvaluation = $criteresEvaluation.get()
   let textDescription = "Évaluation de l'élève :\n\n"
@@ -55,7 +52,6 @@ function convertEvaluationToText(evaluations) {
   return textDescription
 }
 
-// Fonction pour vérifier si toutes les évaluations sont complètes
 export function isEvaluationComplete(currentEleve) {
   const { participation, comportement, autonomie } = currentEleve.evaluations || {}
 
@@ -72,32 +68,25 @@ export function isEvaluationComplete(currentEleve) {
   )
 }
 
-// Fonction principale de génération d'appréciation
 export async function onGenerateAppreciation() {
   const currentEleve = $currentEleve.get()
   const agents = $agents.get()
   const isGenerating = $isGeneratingAppreciation.get()
 
-  // Vérifications préliminaires
   if (!isEvaluationComplete(currentEleve) || isGenerating) return
 
   $isGeneratingAppreciation.set(true)
 
   try {
-    // Vider l'ancien contexte/historique des messages
     updateMessages([])
 
-    // Convertir les évaluations en texte descriptif
     const evaluationText = convertEvaluationToText(currentEleve.evaluations)
 
-    // Construire le nom complet de l'élève
     const nomComplet = [currentEleve.prenom, currentEleve.nom].filter(Boolean).join(' ')
     const eleveInfo = nomComplet || "l'élève"
 
-    // Déterminer le genre pour l'accord grammatical
     const genre = currentEleve.sexe === 'F' ? 'féminin' : 'masculin'
 
-    // Ajouter le message utilisateur avec les informations complètes de l'élève
     addMessage({
       role: 'user',
       content: `Génère une appréciation pour ${eleveInfo} (${
@@ -109,7 +98,6 @@ export async function onGenerateAppreciation() {
     const messages = $messages.get()
     const contextInputs = constructCtxArray(messages)
 
-    // Traitement avec les agents
     for (let i = 0, len = agents.length; i < len; i++) {
       const agent = agents[i]
 
@@ -123,7 +111,6 @@ export async function onGenerateAppreciation() {
 
       let cloned = $messages.get()
 
-      // Construire le prompt avec les informations complètes de l'élève
       const promptWithStudentInfo = `Informations sur l'élève :
 - Nom : ${eleveInfo}
 - Sexe : ${currentEleve.sexe} (${genre})
@@ -131,23 +118,19 @@ export async function onGenerateAppreciation() {
 
 ${evaluationText}`
 
-      // Appel de l'agent
       const stream = await onAgent({
         prompt: promptWithStudentInfo,
         agent,
         contextInputs,
       })
 
-      // Traitement du stream
       for await (const part of stream) {
         let token = part.choices[0]?.delta?.content || ''
 
-        // Nettoyer les balises <think> du token
         token = cleanThinkTags(token)
 
         const last = cloned.at(-1)
 
-        // Remplacer le message "en cours" par le contenu réel au premier token
         if (last.content.includes('🔄') && token) {
           cloned[cloned.length - 1] = {
             ...last,
@@ -163,7 +146,6 @@ ${evaluationText}`
         updateMessages([...cloned])
       }
 
-      // Marquer comme terminé et nettoyer le contenu final
       const last = cloned.at(-1)
       const cleanedContent = cleanThinkTags(last.content).trim()
 
@@ -173,12 +155,10 @@ ${evaluationText}`
         completed: true,
       }
 
-      // Si c'est le dernier agent (Rédacteur Final), mettre à jour l'appréciation
       if (i === agents.length - 1) {
         updateAppreciationEleve(currentEleve.id, cleanedContent)
       }
 
-      // Ajouter le prochain message assistant si ce n'est pas le dernier
       if (i !== agents.length - 1) {
         cloned = [
           ...cloned,
@@ -194,7 +174,6 @@ ${evaluationText}`
       updateMessages([...cloned])
     }
 
-    // Message de fin
     addMessage({
       role: 'assistant',
       content: '✅ Appréciation générée avec succès !',
@@ -213,12 +192,6 @@ ${evaluationText}`
   }
 }
 
-// Dans votre store, si vous voulez nettoyer le HTML pour le stocker en texte simple
 export function updateAppreciationFromEditor(eleveId, htmlContent) {
-  // Si vous voulez garder le HTML
   updateAppreciationEleve(eleveId, htmlContent)
-
-  // Ou si vous voulez convertir en texte simple
-  // const textContent = htmlContent.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ')
-  // updateAppreciationEleve(eleveId, textContent)
 }

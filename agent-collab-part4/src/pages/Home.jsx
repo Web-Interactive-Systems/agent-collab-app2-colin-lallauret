@@ -9,7 +9,6 @@ import { PinLeftIcon, PinRightIcon } from '@radix-ui/react-icons'
 function Home() {
   const [showChat, setShowChat] = useState(true)
 
-  // Largeur du chat (en px)
   const chatWidth = 350
   const closedWidth = 60
 
@@ -22,7 +21,6 @@ function Home() {
       <Eleve />
       {/* <Agent /> */}
 
-      {/* Pin icon always at the same place */}
       <IconButton
         style={{
           position: 'fixed',

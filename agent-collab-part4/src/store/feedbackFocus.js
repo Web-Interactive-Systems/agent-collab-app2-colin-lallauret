@@ -1,4 +1,3 @@
-// store/feedbackFocus.js
 import { atom } from 'nanostores'
 
 export const $isFeedbackFocused = atom(false)
