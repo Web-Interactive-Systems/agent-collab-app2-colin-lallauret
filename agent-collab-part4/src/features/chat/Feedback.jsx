@@ -5,7 +5,7 @@ import ListItem from '@tiptap/extension-list-item'
 import TextStyle from '@tiptap/extension-text-style'
 import { EditorProvider, useCurrentEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { PlayIcon, UpdateIcon } from '@radix-ui/react-icons'
+import { UpdateIcon } from '@radix-ui/react-icons'
 import { Flex, IconButton } from '@radix-ui/themes'
 import { $currentEleve } from '@/store/store'
 import { updateAppreciationEleve } from '@/store/eleveForm'
@@ -14,19 +14,21 @@ import {
   isEvaluationComplete,
   $isGeneratingAppreciation,
 } from '@/store/feedback'
+import { $isFeedbackFocused, focusFeedback, blurFeedback } from '@/store/feedbackFocus'
 import { useStore } from '@nanostores/react'
 import React, { useEffect } from 'react'
 
-// Barre d'outils simplifiée pour l'appréciation
+// Barre d'outils pour l'appréciation
 const MenuBar = () => {
   const { editor } = useCurrentEditor()
+  const isFocused = useStore($isFeedbackFocused)
 
   if (!editor) {
     return null
   }
 
   return (
-    <div className='feedback-control-group'>
+    <div className={`feedback-control-group ${isFocused ? 'modal-mode' : ''}`}>
       <div className='feedback-button-group'>
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -78,34 +80,31 @@ const MenuBar = () => {
   )
 }
 
-// Composant éditeur avec synchronisation
+// Composant éditeur avec gestion du focus modal
 const AppreciationEditor = () => {
   const { editor } = useCurrentEditor()
   const currentEleve = useStore($currentEleve)
+  const isFocused = useStore($isFeedbackFocused)
 
-  // 🔥 FIX : Synchroniser le contenu de l'éditeur avec le store
+  // Synchronisation du contenu
   useEffect(() => {
     if (!editor || !currentEleve) return
 
-    // Gérer le cas où il n'y a pas d'appréciation (élève sans appréciation)
     let content
     if (currentEleve.appreciation && currentEleve.appreciation.trim()) {
-      // Si l'appréciation existe et n'est pas vide
       content = currentEleve.appreciation.includes('<')
         ? currentEleve.appreciation
         : `<p>${currentEleve.appreciation.replace(/\n/g, '</p><p>')}</p>`
     } else {
-      // Si pas d'appréciation ou appréciation vide, vider l'éditeur
       content = '<p></p>'
     }
 
-    // Mettre à jour uniquement si le contenu a changé
     if (editor.getHTML() !== content) {
       editor.commands.setContent(content, false)
     }
-  }, [editor, currentEleve?.id, currentEleve?.appreciation]) // 🔥 Ajouter l'ID pour détecter le changement d'élève
+  }, [editor, currentEleve?.id, currentEleve?.appreciation])
 
-  // Gérer les changements dans l'éditeur
+  // Gestion des événements
   useEffect(() => {
     if (!editor || !currentEleve) return
 
@@ -114,12 +113,31 @@ const AppreciationEditor = () => {
       updateAppreciationEleve(currentEleve.id, html)
     }
 
+    const handleFocus = () => {
+      focusFeedback()
+    }
+
+    const handleKeyDown = (view, event) => {
+      // Escape pour sortir du mode focus
+      if (event.key === 'Escape' && isFocused) {
+        event.preventDefault()
+        blurFeedback()
+        editor.commands.blur()
+        return true
+      }
+      return false
+    }
+
     editor.on('update', handleUpdate)
+    editor.on('focus', handleFocus)
+    editor.view.dom.addEventListener('keydown', handleKeyDown)
 
     return () => {
       editor.off('update', handleUpdate)
+      editor.off('focus', handleFocus)
+      editor.view.dom.removeEventListener('keydown', handleKeyDown)
     }
-  }, [editor, currentEleve?.id])
+  }, [editor, currentEleve?.id, isFocused])
 
   return null
 }
@@ -129,47 +147,70 @@ const extensions = [
   Color.configure({ types: [TextStyle.name, ListItem.name] }),
   TextStyle.configure({ types: [ListItem.name] }),
   StarterKit.configure({
-    bulletList: {
-      keepMarks: true,
-      keepAttributes: false,
-    },
-    orderedList: {
-      keepMarks: true,
-      keepAttributes: false,
-    },
+    bulletList: { keepMarks: true, keepAttributes: false },
+    orderedList: { keepMarks: true, keepAttributes: false },
   }),
 ]
 
 function Feedback() {
   const currentEleve = useStore($currentEleve)
   const isGenerating = useStore($isGeneratingAppreciation)
-
-  // Vérifier si l'évaluation est complète
+  const isFocused = useStore($isFeedbackFocused)
   const playDisable = !isEvaluationComplete(currentEleve)
 
-  // 🔥 FIX : Contenu initial vide si pas d'appréciation
   const initialContent =
     currentEleve?.appreciation && currentEleve.appreciation.trim()
       ? currentEleve.appreciation
       : '<p></p>'
 
+  // Gérer le clic sur le backdrop
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      blurFeedback()
+    }
+  }
+
   return (
     <>
+      {/* Backdrop blur quand focusé */}
+      {isFocused && (
+        <div
+          className='feedback-backdrop'
+          onClick={handleBackdropClick}
+        />
+      )}
+
       <Flex
         direction='column'
-        gap='1'
+        gap='3'
         width='100%'
         justify='center'
-        align='center'>
-        <div className='feedback-editor-container'>
+        align='center'
+        className={isFocused ? 'feedback-focused' : ''}>
+        {/* Éditeur qui peut devenir modal */}
+        <div
+          className={`feedback-editor-container ${
+            isFocused ? 'modal-mode' : 'normal-mode'
+          }`}>
+          {isFocused && (
+            <div className='feedback-modal-header'>
+              <h3>✍️ Rédaction de l'appréciation</h3>
+              <p>Prenez votre temps pour rédiger une appréciation détaillée</p>
+            </div>
+          )}
+
           <EditorProvider
             slotBefore={<MenuBar />}
             extensions={extensions}
             content={initialContent}
             editorProps={{
               attributes: {
-                class: 'feedback-editor',
-                placeholder: 'Appréciation...',
+                class: isFocused
+                  ? 'feedback-editor modal-editor'
+                  : 'feedback-editor normal-editor',
+                placeholder: isFocused
+                  ? 'Rédigez votre appréciation détaillée ici...\n\nVous pouvez utiliser le formatage (gras, italique, listes) pour structurer votre texte.\n\nAppuyez sur Échap pour revenir au mode compact.'
+                  : "Cliquez pour rédiger l'appréciation...",
               },
             }}>
             <AppreciationEditor />
@@ -177,14 +218,22 @@ function Feedback() {
         </div>
       </Flex>
 
+      {/* Actions - toujours visibles */}
       <Flex
         justify='between'
-        align='center'>
+        align='center'
+        mt='3'
+        className={isFocused ? 'feedback-actions-modal' : 'feedback-actions-normal'}>
         <IconButton
           size='3'
           disabled={playDisable || isGenerating}
-          onClick={onGenerateAppreciation}>
-          <UpdateIcon />
+          onClick={onGenerateAppreciation}
+          title={
+            isGenerating
+              ? 'Génération en cours...'
+              : 'Générer une appréciation automatique'
+          }>
+          <UpdateIcon className={isGenerating ? 'animate-spin' : ''} />
         </IconButton>
       </Flex>
     </>
