@@ -46,8 +46,19 @@ export const $eleves = atom([
         auto_3: 1,
       },
     },
-    appreciation:
-      'Emma Dupont a montré un fort besoin d’auto-organisation et de confiance en soi, mais elle reste encore en phase de développement dans plusieurs domaines. Elle n’a pas encore participé aux discussions de classe ni levé la main pour répondre, ce qui limite sa contribution. Son comportement est souvent marqué par des conflits avec ses camarades et une gestion des émotions difficile. En revanche, elle a un sens du travail et ne se lasse jamais de terminer ses tâches sans aide. Il serait utile de lui offrir des opportunités de prise d’initiative et de dialogue pour renforcer sa confiance en soi. Emma, je te soutiens dans ton élan et espère que tu vas progresser vers une meilleure autonomie et participation.',
+    appreciation: `
+    <div class="appreciation">
+      <p><strong>Emma Dupont</strong> a montré un <em>fort besoin d'auto-organisation et de confiance en soi</em>, mais elle reste encore en phase de développement dans plusieurs domaines.</p>
+      
+      <p>Elle n'a pas encore participé aux discussions de classe ni levé la main pour répondre, ce qui limite sa contribution. Son comportement est souvent marqué par des <span style="color: #e74c3c;">conflits avec ses camarades</span> et une <span style="color: #e74c3c;">gestion des émotions difficile</span>.</p>
+      
+      <p><span style="color: #27ae60;"><strong>En revanche</strong></span>, elle a un <em>sens du travail</em> et ne se lasse jamais de terminer ses tâches sans aide.</p>
+      
+      <p>Il serait utile de lui offrir des <mark>opportunités de prise d'initiative</mark> et de dialogue pour renforcer sa confiance en soi.</p>
+      
+      <p><strong>Emma</strong>, je te soutiens dans ton élan et espère que tu vas progresser vers une <em>meilleure autonomie et participation</em>.</p>
+    </div>
+  `,
   },
   {
     id: Math.random().toString(),

@@ -1,3 +1,6 @@
+import { Dialog } from '@radix-ui/themes'
+import AgentForm from '@/features/agent/AgentForm'
+import { $selectedAgentId, setSelectedAgent } from '@/store/store'
 import { $agents, $selectedChatAgents, setSelectChatAgents } from '@/store/store'
 import {
   closestCenter,
@@ -18,8 +21,16 @@ import { CSS } from '@dnd-kit/utilities'
 import { useStore } from '@nanostores/react'
 import { Cross1Icon, Pencil1Icon } from '@radix-ui/react-icons'
 import { Flex, IconButton, Text } from '@radix-ui/themes'
+import React, { useState } from 'react'
 
 function SortableAgent({ agent, onRemove }) {
+  const [open, setOpen] = useState(false)
+
+  const handleEdit = () => {
+    setSelectedAgent(agent.id)
+    setOpen(true)
+  }
+
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: agent.id,
   })
@@ -48,7 +59,8 @@ function SortableAgent({ agent, onRemove }) {
       </Text>
       <IconButton
         variant='ghost'
-        size='1'>
+        size='1'
+        onClick={handleEdit}>
         <Pencil1Icon />
       </IconButton>
       <IconButton
@@ -58,6 +70,19 @@ function SortableAgent({ agent, onRemove }) {
         onClick={onRemove}>
         <Cross1Icon />
       </IconButton>
+
+      {/* Dialog pour édition */}
+      <Dialog.Root
+        open={open}
+        onOpenChange={setOpen}>
+        <Dialog.Content maxWidth='500px'>
+          <Dialog.Title>Modifier l’agent</Dialog.Title>
+          <AgentForm />
+          <Dialog.Close>
+            <button style={{ marginTop: 16 }}>Fermer</button>
+          </Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Root>
     </div>
   )
 }

@@ -178,8 +178,8 @@ function Feedback() {
         direction='column'
         width='100%'
         gap='4'
-        justify='center'
-        align='center'>
+        justify='start'
+        align='start'>
         <Flex gap='4'>
           <Flex
             direction='column'
@@ -219,24 +219,24 @@ function Feedback() {
               </EditorProvider>
             </div>
           </Flex>
+        </Flex>
 
-          <Flex
-            justify='between'
-            align='center'
-            mt='3'
-            className={isFocused ? 'feedback-actions-modal' : 'feedback-actions-normal'}>
-            <IconButton
-              size='3'
-              disabled={playDisable || isGenerating}
-              onClick={onGenerateAppreciation}
-              title={
-                isGenerating
-                  ? 'Génération en cours...'
-                  : 'Générer une appréciation automatique'
-              }>
-              <UpdateIcon className={isGenerating ? 'animate-spin' : ''} />
-            </IconButton>
-          </Flex>
+        <Flex
+          justify='between'
+          align='start'
+          className={isFocused ? 'feedback-actions-modal' : 'feedback-actions-normal'}>
+          <Button
+            size='2'
+            disabled={playDisable || isGenerating}
+            onClick={onGenerateAppreciation}
+            title={
+              isGenerating
+                ? 'Génération en cours...'
+                : 'Générer une appréciation automatique'
+            }>
+            Re-générer
+            <UpdateIcon className={isGenerating ? 'animate-spin' : ''} />
+          </Button>
         </Flex>
 
         <Flex>

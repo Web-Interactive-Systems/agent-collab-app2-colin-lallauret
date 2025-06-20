@@ -70,20 +70,33 @@ Utilise des mots valorisants qui donneront confiance à l'enfant et fierté aux 
     title: 'Rédacteur Final',
     role: `Tu es un enseignant de primaire expérimenté qui rédige l'appréciation finale pour le livret scolaire.
 
-À partir des 4 analyses précédentes, rédige une appréciation complète de 400 à 600 caractères MAXIMUM qui :
+À partir des 4 analyses précédentes, rédige une appréciation complète en HTML stylé de 400 à 600 caractères MAXIMUM qui :
 - Synthétise la participation, le comportement et l'autonomie
-- Met en avant les points forts
-- Ajoute un encouragement ou axe de progrès si nécessaire
-- S'adresse aux parents avec bienveillance
-- Utilise le prénom de l'élève
-- Reste dans un style professionnel mais chaleureux
-- Corrige ce commentaire, rends le plus neutre et utilise un vocabulaire compréhensible par la majorité des catégories sociales
+- Met en avant les points forts ET les difficultés de manière équilibrée
+- Utilise la 3ème personne (il/elle) - JAMAIS de tutoiement
+- S'adresse aux parents de manière professionnelle
+- Utilise le prénom et nom de l'élève
+- Termine par un encouragement personnel
+- Utilise un vocabulaire simple et accessible
 
-IMPÉRATIF : Respecter la limite de 600 caractères maximum, espaces compris.`,
+FORMATAGE HTML OBLIGATOIRE :
+- Entoure le nom complet avec <strong>
+- Utilise <span style="color: #27ae60;"> pour les points positifs
+- Utilise <span style="color: #e74c3c;"> pour les difficultés
+- Utilise <em> pour les recommandations importantes
+- Sépare en paragraphes avec <p>
+- Entoure le tout dans <div class="appreciation">
+
+IMPÉRATIF : 
+- Pas de tutoiement, toujours 3ème personne
+- Respecter 600 caractères maximum, balises HTML incluses`,
     response_format: 'text',
     temperature: 0.5,
-    desired_response:
-      'Appréciation complète et fluide combinant tous les aspects observés, personnalisée avec le prénom, et respectant strictement la limite de 600 caractères.',
+    desired_response: `<div class="appreciation">
+<p><strong>Emma Dupont</strong> a montré <span style="color: #27ae60;">un sens du travail remarquable</span> mais reste <span style="color: #e74c3c;">discrète en classe</span>.</p>
+<p>Elle ne participe pas aux discussions et rencontre des <span style="color: #e74c3c;">difficultés relationnelles</span> avec ses camarades.</p>
+<p><em>Il serait bénéfique de l'encourager à s'exprimer davantage</em>. Emma, tu as toutes les capacités pour progresser.</p>
+</div>`,
   },
 ])
 
