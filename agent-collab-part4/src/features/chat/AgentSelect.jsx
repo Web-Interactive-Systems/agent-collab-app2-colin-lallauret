@@ -16,7 +16,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useStore } from '@nanostores/react'
-import { Cross1Icon } from '@radix-ui/react-icons'
+import { Cross1Icon, Pencil1Icon } from '@radix-ui/react-icons'
 import { Flex, IconButton, Text } from '@radix-ui/themes'
 
 function SortableAgent({ agent, onRemove }) {
@@ -43,7 +43,14 @@ function SortableAgent({ agent, onRemove }) {
       style={style}
       {...attributes}
       {...listeners}>
-      <Text size='1'>{agent.title}</Text>
+      <Text size='1'>
+        {agent.emoji} {agent.title}
+      </Text>
+      <IconButton
+        variant='ghost'
+        size='1'>
+        <Pencil1Icon />
+      </IconButton>
       <IconButton
         variant='ghost'
         size='1'

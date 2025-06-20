@@ -6,7 +6,7 @@ import {
   onGenerateAppreciation,
 } from '@/store/store'
 import { useStore } from '@nanostores/react'
-import { ArrowRightIcon, RocketIcon } from '@radix-ui/react-icons'
+import { ArrowRightIcon, PlayIcon, RocketIcon } from '@radix-ui/react-icons'
 import {
   Avatar,
   Blockquote,
@@ -20,6 +20,8 @@ import {
   Text,
 } from '@radix-ui/themes'
 import React from 'react'
+import { AgentMenu } from '../chat/AgentMenu'
+import { AgentSelect } from '../chat/AgentSelect'
 
 const EleveForm = () => {
   const currentEleve = useStore($currentEleve)
@@ -204,7 +206,7 @@ const EleveForm = () => {
                     onClick={onGenerateAppreciation}
                     disabled={!isLastTabComplete}>
                     Générer
-                    <RocketIcon />
+                    <PlayIcon />
                   </Button>
                 )}
               </Flex>

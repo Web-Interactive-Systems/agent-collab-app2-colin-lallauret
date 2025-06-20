@@ -6,7 +6,7 @@ import TextStyle from '@tiptap/extension-text-style'
 import { EditorProvider, useCurrentEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { UpdateIcon } from '@radix-ui/react-icons'
-import { Flex, IconButton } from '@radix-ui/themes'
+import { Button, Flex, IconButton } from '@radix-ui/themes'
 import { $currentEleve } from '@/store/store'
 import { updateAppreciationEleve } from '@/store/eleveForm'
 import {
@@ -17,6 +17,8 @@ import {
 import { $isFeedbackFocused, focusFeedback, blurFeedback } from '@/store/feedbackFocus'
 import { useStore } from '@nanostores/react'
 import React, { useEffect } from 'react'
+import { AgentMenu } from './AgentMenu'
+import { AgentSelect } from './AgentSelect'
 
 const MenuBar = () => {
   const { editor } = useCurrentEditor()
@@ -174,57 +176,73 @@ function Feedback() {
 
       <Flex
         direction='column'
-        gap='3'
         width='100%'
+        gap='4'
         justify='center'
-        align='center'
-        className={isFocused ? 'feedback-focused' : ''}>
-        <div
-          className={`feedback-editor-container ${
-            isFocused ? 'modal-mode' : 'normal-mode'
-          }`}>
-          {isFocused && (
-            <div className='feedback-modal-header'>
-              <h3>✍️ Rédaction de l'appréciation</h3>
-              <p>Prenez votre temps pour rédiger une appréciation détaillée</p>
+        align='center'>
+        <Flex gap='4'>
+          <Flex
+            direction='column'
+            gap='3'
+            width='100%'
+            justify='center'
+            align='center'
+            className={isFocused ? 'feedback-focused' : ''}>
+            <div
+              className={`feedback-editor-container ${
+                isFocused ? 'modal-mode' : 'normal-mode'
+              }`}
+              style={{ maxHeight: '800px', overflowY: 'auto' }}>
+              {isFocused && (
+                <div className='feedback-modal-header'>
+                  <h3>✍️ Rédaction de l'appréciation</h3>
+                  <p>Prenez votre temps pour rédiger une appréciation détaillée</p>
+                </div>
+              )}
+
+              <EditorProvider
+                slotBefore={<MenuBar />}
+                extensions={extensions}
+                content={initialContent}
+                editorProps={{
+                  attributes: {
+                    class: isFocused
+                      ? 'feedback-editor modal-editor'
+                      : 'feedback-editor normal-editor',
+                    placeholder: isFocused
+                      ? 'Rédigez votre appréciation détaillée ici...\n\nVous pouvez utiliser le formatage (gras, italique, listes) pour structurer votre texte.\n\nAppuyez sur Échap pour revenir au mode compact.'
+                      : "Cliquez pour rédiger l'appréciation...",
+                    style: 'max-height: 800px; overflow-y: auto;',
+                  },
+                }}>
+                <AppreciationEditor />
+              </EditorProvider>
             </div>
-          )}
+          </Flex>
 
-          <EditorProvider
-            slotBefore={<MenuBar />}
-            extensions={extensions}
-            content={initialContent}
-            editorProps={{
-              attributes: {
-                class: isFocused
-                  ? 'feedback-editor modal-editor'
-                  : 'feedback-editor normal-editor',
-                placeholder: isFocused
-                  ? 'Rédigez votre appréciation détaillée ici...\n\nVous pouvez utiliser le formatage (gras, italique, listes) pour structurer votre texte.\n\nAppuyez sur Échap pour revenir au mode compact.'
-                  : "Cliquez pour rédiger l'appréciation...",
-              },
-            }}>
-            <AppreciationEditor />
-          </EditorProvider>
-        </div>
-      </Flex>
+          <Flex
+            justify='between'
+            align='center'
+            mt='3'
+            className={isFocused ? 'feedback-actions-modal' : 'feedback-actions-normal'}>
+            <IconButton
+              size='3'
+              disabled={playDisable || isGenerating}
+              onClick={onGenerateAppreciation}
+              title={
+                isGenerating
+                  ? 'Génération en cours...'
+                  : 'Générer une appréciation automatique'
+              }>
+              <UpdateIcon className={isGenerating ? 'animate-spin' : ''} />
+            </IconButton>
+          </Flex>
+        </Flex>
 
-      <Flex
-        justify='between'
-        align='center'
-        mt='3'
-        className={isFocused ? 'feedback-actions-modal' : 'feedback-actions-normal'}>
-        <IconButton
-          size='3'
-          disabled={playDisable || isGenerating}
-          onClick={onGenerateAppreciation}
-          title={
-            isGenerating
-              ? 'Génération en cours...'
-              : 'Générer une appréciation automatique'
-          }>
-          <UpdateIcon className={isGenerating ? 'animate-spin' : ''} />
-        </IconButton>
+        <Flex>
+          <AgentMenu></AgentMenu>
+          <AgentSelect></AgentSelect>
+        </Flex>
       </Flex>
     </>
   )

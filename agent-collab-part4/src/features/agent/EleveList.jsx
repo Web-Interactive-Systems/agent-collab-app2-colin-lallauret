@@ -52,7 +52,6 @@ function EleveList() {
           <Card
             style={{
               width: '100%',
-              height: 'min-content',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

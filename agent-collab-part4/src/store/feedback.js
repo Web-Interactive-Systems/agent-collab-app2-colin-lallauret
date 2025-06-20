@@ -9,6 +9,7 @@ import {
   $agents,
 } from '@/store/store'
 import { updateAppreciationEleve } from '@/store/eleveForm'
+import { $selectedChatAgents } from '@/store/chatAgents'
 
 export const $isGeneratingAppreciation = atom(false)
 
@@ -70,7 +71,11 @@ export function isEvaluationComplete(currentEleve) {
 
 export async function onGenerateAppreciation() {
   const currentEleve = $currentEleve.get()
-  const agents = $agents.get()
+  const allAgents = $agents.get()
+  const selectedIds = $selectedChatAgents.get()
+  const agents = selectedIds
+    .map((id) => allAgents.find((a) => a.id === id))
+    .filter(Boolean)
   const isGenerating = $isGeneratingAppreciation.get()
 
   if (!isEvaluationComplete(currentEleve) || isGenerating) return
