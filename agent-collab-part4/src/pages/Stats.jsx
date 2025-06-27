@@ -82,14 +82,12 @@ Math: ${eleve.matieres.math}`,
       ],
     })
 
-    // Store the ref value in a variable to use in cleanup
     const container = ref.current
 
     const handleMouseMove = (e) => {
       if (e.target?.nodeName.toLowerCase() !== 'image') {
         return
       }
-      // Trouver l'index de l'image survolée
       const images = Array.from(container.querySelectorAll('image'))
       const idx = images.indexOf(e.target)
       if (idx === -1) return
@@ -112,7 +110,6 @@ Math: ${eleve.matieres.math}`,
         },
       }
 
-      // Supprimer l'ancien tooltip s'il existe
       let tooltip = document.getElementById('custom-tooltip')
       if (tooltip) tooltip.remove()
 
