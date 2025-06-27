@@ -56,3 +56,15 @@ export const updateAppreciationEleve = (id, appreciation) => {
     $eleves.set([...eleves])
   }
 }
+
+export const updateNoteAppreciationEleve = (id, note) => {
+  const eleves = $eleves.get()
+  const index = eleves.findIndex((e) => e.id === id)
+  if (index !== -1) {
+    eleves[index] = {
+      ...eleves[index],
+      note_appreciation: note,
+    }
+    $eleves.set([...eleves])
+  }
+}

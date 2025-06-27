@@ -3,6 +3,7 @@ import {
   RocketIcon,
   DrawingPinFilledIcon,
   GearIcon,
+  BackpackIcon,
 } from '@radix-ui/react-icons'
 import { Button, Flex, Dialog, Text, TextField } from '@radix-ui/themes'
 import { Link } from 'raviger'
@@ -50,6 +51,21 @@ export function Header() {
               width='22'
             />
             AppréciAI
+          </Link>
+
+          <Link
+            href='/stats'
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 8,
+            }}>
+            <BackpackIcon
+              height='22'
+              width='22'
+            />
+            Stats
           </Link>
         </Flex>
 

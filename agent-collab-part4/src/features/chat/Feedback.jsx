@@ -8,7 +8,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { UpdateIcon } from '@radix-ui/react-icons'
 import { Button, Flex, IconButton } from '@radix-ui/themes'
 import { $currentEleve } from '@/store/store'
-import { updateAppreciationEleve } from '@/store/eleveForm'
+import { updateAppreciationEleve, updateNoteAppreciationEleve } from '@/store/eleveForm'
 import {
   onGenerateAppreciation,
   isEvaluationComplete,
@@ -225,6 +225,25 @@ function Feedback() {
           justify='between'
           align='start'
           className={isFocused ? 'feedback-actions-modal' : 'feedback-actions-normal'}>
+          <input
+            type='number'
+            min={1}
+            max={5}
+            value={currentEleve?.note_appreciation ?? ''}
+            onChange={(e) =>
+              updateNoteAppreciationEleve(currentEleve.id, Number(e.target.value))
+            }
+            style={{
+              width: 60,
+              marginRight: 12,
+              fontSize: 16,
+              padding: 4,
+              borderRadius: 4,
+              border: '1px solid #ccc',
+            }}
+            placeholder='Note'
+          />
+
           <Button
             size='2'
             disabled={playDisable || isGenerating}

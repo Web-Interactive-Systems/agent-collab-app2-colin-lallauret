@@ -4,11 +4,13 @@ import LayoutTheme from './LayoutTheme'
 import Home from '@/pages/Home'
 import { Button } from '@radix-ui/themes'
 import HomeAgent from '@/pages/HomeAgent'
+import Stats from '@/pages/Stats'
 
 const routes = {
   '/': () => <Home />,
   '/count': () => <Counter param1='azrlkazjrzaj' />,
   '/agents': () => <HomeAgent />,
+  '/stats': () => <Stats />,
 }
 
 function Counter({ param1 }) {

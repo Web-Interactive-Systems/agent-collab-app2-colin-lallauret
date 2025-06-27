@@ -1,7 +1,7 @@
 import { atom } from 'nanostores'
 
 function genererAvatarUrl(prenom, nom, sexe) {
-  const seed = `${prenom}-${nom}-${Math.random().toString(36).substr(2, 9)}` // Ajout de random pour unicité
+  const seed = `${prenom}-${nom}`
   const gender = sexe === 'F' ? 'female' : 'male'
 
   return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&gender=${gender}&size=128`
@@ -59,6 +59,7 @@ export const $eleves = atom([
       <p><strong>Emma</strong>, je te soutiens dans ton élan et espère que tu vas progresser vers une <em>meilleure autonomie et participation</em>.</p>
     </div>
   `,
+    note_appreciation: 2,
   },
   {
     id: Math.random().toString(),
@@ -89,6 +90,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: 5,
   },
   {
     id: Math.random().toString(),
@@ -119,6 +121,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -149,6 +152,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -179,6 +183,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -205,6 +210,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -231,6 +237,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -257,6 +264,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -283,6 +291,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -309,6 +318,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -335,6 +345,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -361,6 +372,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -387,6 +399,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -413,6 +426,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -439,6 +453,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -465,6 +480,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -491,6 +507,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -517,6 +534,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -543,6 +561,7 @@ export const $eleves = atom([
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   },
   {
     id: Math.random().toString(),
@@ -550,25 +569,30 @@ export const $eleves = atom([
     prenom: 'Ethan',
     sexe: 'M',
     picture: genererAvatarUrl('Ethan', 'Lefebvre', 'M'),
-    matieres: genererNotesAleatoires(),
+    matieres: {
+      lecture: 1,
+      ecriture: 1,
+      math: 1,
+    },
     evaluations: {
       participation: {
-        part_1: null,
-        part_2: null,
-        part_3: null,
+        part_1: 1,
+        part_2: 1,
+        part_3: 1,
       },
       comportement: {
-        comp_1: null,
-        comp_2: null,
-        comp_3: null,
+        comp_1: 1,
+        comp_2: 1,
+        comp_3: 1,
       },
       autonomie: {
-        auto_1: null,
-        auto_2: null,
-        auto_3: null,
+        auto_1: 1,
+        auto_2: 1,
+        auto_3: 1,
       },
     },
     appreciation: null,
+    note_appreciation: 1,
   },
   {
     id: Math.random().toString(),
@@ -576,25 +600,30 @@ export const $eleves = atom([
     prenom: 'Inès',
     sexe: 'F',
     picture: genererAvatarUrl('Inès', 'Muller', 'F'),
-    matieres: genererNotesAleatoires(),
+    matieres: {
+      lecture: 5,
+      ecriture: 5,
+      math: 5,
+    },
     evaluations: {
       participation: {
-        part_1: null,
-        part_2: null,
-        part_3: null,
+        part_1: 5,
+        part_2: 5,
+        part_3: 5,
       },
       comportement: {
-        comp_1: null,
-        comp_2: null,
-        comp_3: null,
+        comp_1: 5,
+        comp_2: 5,
+        comp_3: 5,
       },
       autonomie: {
-        auto_1: null,
-        auto_2: null,
-        auto_3: null,
+        auto_1: 5,
+        auto_2: 5,
+        auto_3: 5,
       },
     },
     appreciation: null,
+    note_appreciation: 5,
   },
   {
     id: Math.random().toString(),
@@ -602,25 +631,30 @@ export const $eleves = atom([
     prenom: 'Gabriel',
     sexe: 'M',
     picture: genererAvatarUrl('Gabriel', 'Laurent', 'M'),
-    matieres: genererNotesAleatoires(),
+    matieres: {
+      lecture: 4,
+      ecriture: 3,
+      math: 4,
+    },
     evaluations: {
       participation: {
-        part_1: null,
-        part_2: null,
-        part_3: null,
+        part_1: 4,
+        part_2: 4,
+        part_3: 4,
       },
       comportement: {
-        comp_1: null,
-        comp_2: null,
-        comp_3: null,
+        comp_1: 4,
+        comp_2: 4,
+        comp_3: 4,
       },
       autonomie: {
-        auto_1: null,
-        auto_2: null,
-        auto_3: null,
+        auto_1: 4,
+        auto_2: 4,
+        auto_3: 4,
       },
     },
     appreciation: null,
+    note_appreciation: 5,
   },
   {
     id: Math.random().toString(),
@@ -628,25 +662,30 @@ export const $eleves = atom([
     prenom: 'Lisa',
     sexe: 'F',
     picture: genererAvatarUrl('Lisa', 'Guerin', 'F'),
-    matieres: genererNotesAleatoires(),
+    matieres: {
+      lecture: 1,
+      ecriture: 2,
+      math: 3,
+    },
     evaluations: {
       participation: {
-        part_1: null,
-        part_2: null,
-        part_3: null,
+        part_1: 4,
+        part_2: 3,
+        part_3: 2,
       },
       comportement: {
-        comp_1: null,
-        comp_2: null,
-        comp_3: null,
+        comp_1: 4,
+        comp_2: 2,
+        comp_3: 1,
       },
       autonomie: {
-        auto_1: null,
-        auto_2: null,
-        auto_3: null,
+        auto_1: 2,
+        auto_2: 3,
+        auto_3: 3,
       },
     },
     appreciation: null,
+    note_appreciation: 3,
   },
 ])
 
@@ -676,6 +715,7 @@ export function addEleve(nom, prenom, sexe, matieres) {
       },
     },
     appreciation: null,
+    note_appreciation: Math.floor(Math.random() * 5) + 1,
   }
   $eleves.set([...$eleves.get(), newEleve])
 }
