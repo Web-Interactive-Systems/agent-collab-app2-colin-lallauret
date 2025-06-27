@@ -4,6 +4,7 @@ import {
   DrawingPinFilledIcon,
   GearIcon,
   BackpackIcon,
+  FrameIcon,
 } from '@radix-ui/react-icons'
 import { Button, Flex, Dialog, Text, TextField } from '@radix-ui/themes'
 import { Link } from 'raviger'
@@ -61,11 +62,11 @@ export function Header() {
               alignItems: 'center',
               gap: 8,
             }}>
-            <BackpackIcon
+            <FrameIcon
               height='22'
               width='22'
             />
-            Stats
+            Statistiques
           </Link>
         </Flex>
 

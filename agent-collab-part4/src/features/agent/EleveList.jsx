@@ -58,7 +58,10 @@ function EleveList() {
             }}>
             <Button
               type='submit'
-              onClick={() => addEleve()}>
+              onClick={() => addEleve()}
+              style={{
+                cursor: 'not-allowed',
+              }}>
               <PlusIcon />
               Ajouter
             </Button>

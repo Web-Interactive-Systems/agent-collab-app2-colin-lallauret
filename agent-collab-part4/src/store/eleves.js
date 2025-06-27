@@ -1,10 +1,13 @@
 import { atom } from 'nanostores'
 
 function genererAvatarUrl(prenom, nom, sexe) {
-  const seed = `${prenom}-${nom}`
   const gender = sexe === 'F' ? 'female' : 'male'
+  const seed = `${prenom}-${nom}`
+  const backgroundColor = sexe === 'F' ? 'ffd5dc' : 'b6e3f4'
 
-  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&gender=${gender}&size=128`
+  return `https://api.dicebear.com/7.x/personas/svg?seed=${encodeURIComponent(
+    seed,
+  )}&gender=${gender}&backgroundColor=${backgroundColor}&size=128`
 }
 
 function genererNotesAleatoires() {
@@ -89,7 +92,7 @@ export const $eleves = atom([
         auto_3: 5,
       },
     },
-    appreciation: null,
+    appreciation: `Appréciation de test`,
     note_appreciation: 5,
   },
   {
@@ -591,7 +594,7 @@ export const $eleves = atom([
         auto_3: 1,
       },
     },
-    appreciation: null,
+    appreciation: `Appréciation de test`,
     note_appreciation: 1,
   },
   {
@@ -622,7 +625,7 @@ export const $eleves = atom([
         auto_3: 5,
       },
     },
-    appreciation: null,
+    appreciation: `Appréciation de test`,
     note_appreciation: 5,
   },
   {
@@ -653,7 +656,7 @@ export const $eleves = atom([
         auto_3: 4,
       },
     },
-    appreciation: null,
+    appreciation: `Appréciation de test`,
     note_appreciation: 5,
   },
   {
@@ -684,7 +687,7 @@ export const $eleves = atom([
         auto_3: 3,
       },
     },
-    appreciation: null,
+    appreciation: `Appréciation de test`,
     note_appreciation: 3,
   },
 ])

@@ -28,6 +28,11 @@ export function PlotImageScatterplot({ eleves }) {
       lecture: eleve.matieres.lecture,
       ecriture: eleve.matieres.ecriture,
       math: eleve.matieres.math,
+      all: `${eleve.prenom} ${eleve.nom} 
+Appréciation: ${eleve.note_appreciation}
+Lecture: ${eleve.matieres.lecture}
+Écriture: ${eleve.matieres.ecriture}
+Math: ${eleve.matieres.math}`,
     }))
 
   useEffect(() => {
@@ -48,18 +53,8 @@ export function PlotImageScatterplot({ eleves }) {
           y: 'note_appreciation',
           src: 'avatar',
           width: 40,
-          title: 'nom',
-          tip: (d) => `
-            <div style="min-width:180px">
-              <strong>${d.prenom} ${d.nomSimple}</strong><br/>
-              Lecture : ${d.lecture}/5<br/>
-              Écriture : ${d.ecriture}/5<br/>
-              Math : ${d.math}/5<br/>
-              <hr style="margin:6px 0"/>
-              <strong>Moyenne :</strong> ${d.moyenne}/5<br/>
-              <strong>Note appréciation :</strong> ${d.note_appreciation}/5
-            </div>
-          `,
+          title: 'all',
+          tip: () => '',
         }),
       ],
     })
